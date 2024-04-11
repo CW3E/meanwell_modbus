@@ -1,0 +1,4 @@
+# Write startup event to DRS-240_events.log
+@reboot /Data/modbus/scripts/DRS-240_startup.py 2>&1
+# Read status of Meanwell DRS-240-24 PS/UPS
+*/1 * * * * /Data/modbus/scripts/DRS-240_monitor.py 2>&1
