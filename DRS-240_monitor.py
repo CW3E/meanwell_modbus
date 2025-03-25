@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #
 # Douglas Alden - 13 Mar 2024
-# 
+# Modified 8 Aug 2024 - hkw
 
 import minimalmodbus
 from datetime import datetime
@@ -9,8 +9,7 @@ import string
 import os
 
 # Modbus RTU device parameters
-port = '/dev/ttyUSB0'
-#port = '/dev/ttyS4'
+port = "COM1" #'/dev/ttyUSB0'
 baudrate = 115200
 databits = 8
 parity = 'N'
@@ -24,10 +23,10 @@ instrument.serial.bytesize = databits
 instrument.serial.parity = parity
 instrument.serial.stopbits = stopbits
 
-print(instrument.serial)
-print("")
-print("Modbus address:",hex(instrument.address))
-print("")
+#a print(instrument.serial)
+#a print("")
+#a print("Modbus address:",hex(instrument.address))
+#a print("")
 
 # Function Codes
 READ_HOLDING_REGISTER = 0x03
@@ -81,13 +80,13 @@ def read_registers(instrument, register_address, number_of_bytes, functioncode):
         print(f"{e}")
         return -99999 
 
-def write_to_register(instrument, register_address, value):
-    try:
-        # Write one byte to the specified register
-        instrument.write_register(register_address, value, functioncode=6)
-
-    except Exception as e:
-        print(f"An error occurred during writing: {e}")
+#def write_to_register(instrument, register_address, value):
+#    try:
+#        # Write one byte to the specified register
+#        instrument.write_register(register_address, value, functioncode=6)
+#
+#    except Exception as e:
+#        print(f"An error occurred during writing: {e}")
 
 def save_to_file(values, file_path):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -98,8 +97,8 @@ def save_to_file(values, file_path):
         file.close()
 
 def shutdown_IPC(): # Shutdown the computer
-    ups_shutdown = 'sudo shutdown -h +1 "UPS System Shutdown"'
-    file_path = '/Data/modbus/DRS-240_events.log'
+    ups_shutdown = 'shutdown -s -t 60 -c "UPS System Shutdown"'  #'sudo shutdown -h +1 "UPS System Shutdown"'
+    file_path =  "D:\\modbus\\DRS-240_events.log"     #'/Data/modbus/DRS-240_events.log'   
     Status_out = "Shutdown,UPS System Shutdown"
     save_to_file(Status_out, file_path)
 
@@ -107,43 +106,43 @@ def shutdown_IPC(): # Shutdown the computer
     
 def main():
 
-    # Power supply parameters
-
-    # UPS_CONFIG
-    # default: 0x09
-    ups_config = 0x09
-    # Turn off Wake_Up_EN
-    ups_config = ups_config & 0b00000000
-    # Enable time buffering
-    ups_config = ups_config | 0b00000100
-    # Set UPS_Delay_EN
-    ups_config = ups_config | 0b00010000
-    # Set UPS_Shutdown_EN
-    ups_config = ups_config | 0b00100000
-    # new value: 0x3D
-    write_to_register(instrument, UPS_CONFIG, ups_config)
-    # read ups_config
-    ups_config  = read_registers(instrument, UPS_CONFIG, 1, READ_HOLDING_REGISTER)
-    bin_ups_config = bin(ups_config)
-    print("0x%02X - UPS_Config: 0x%02X %s" % (UPS_CONFIG, ups_config, bin_ups_config))
+#    # Power supply parameters
+#
+#    # UPS_CONFIG
+#    # default: 0x09
+#    ups_config = 0x09
+#    # Turn off Wake_Up_EN
+#    ups_config = ups_config & 0b00000000
+#    # Enable time buffering
+#    ups_config = ups_config | 0b00000100
+#    # Set UPS_Delay_EN
+#    ups_config = ups_config | 0b00010000
+#    # Set UPS_Shutdown_EN
+#    ups_config = ups_config | 0b00100000
+#    # new value: 0x3D
+#    write_to_register(instrument, UPS_CONFIG, ups_config)
+#    # read ups_config
+#    ups_config  = read_registers(instrument, UPS_CONFIG, 1, READ_HOLDING_REGISTER)
+#    bin_ups_config = bin(ups_config)
+#    print("0x%02X - UPS_Config: 0x%02X %s" % (UPS_CONFIG, ups_config, bin_ups_config))
     
-    # TIME_BUFFERING
-    # default: 600 minutes
-    # Set to 600 minutes
-    write_to_register(instrument, TIME_BUFFERING, 600)
-    # read TIME_BUFFERING
-    time_buffer = read_registers(instrument, TIME_BUFFERING, 1, READ_HOLDING_REGISTER)
-    print("0x%02X - Time Buffer: %d min" % (TIME_BUFFERING, time_buffer))
+#    # TIME_BUFFERING
+#    # default: 600 minutes
+#    # Set to 600 minutes
+#    write_to_register(instrument, TIME_BUFFERING, 60)
+#    # read TIME_BUFFERING
+#    time_buffer = read_registers(instrument, TIME_BUFFERING, 1, READ_HOLDING_REGISTER)
+#    print("0x%02X - Time Buffer: %d min" % (TIME_BUFFERING, time_buffer))
 
-    # Set UPS delay time to 180 seconds
-    #write_to_register(instrument, UPS_DELAY_TIME, 180)
-    # Read UPS delay time
-    Delay_time = read_registers(instrument, UPS_DELAY_TIME, 1, READ_HOLDING_REGISTER)
-    print("0x%02X - Delay Time: %d sec" % (UPS_DELAY_TIME, Delay_time))
+#    # Set UPS delay time to 180 seconds
+#    #write_to_register(instrument, UPS_DELAY_TIME, 180)
+#    # Read UPS delay time
+#    Delay_time = read_registers(instrument, UPS_DELAY_TIME, 1, READ_HOLDING_REGISTER)
+#    print("0x%02X - Delay Time: %d sec" % (UPS_DELAY_TIME, Delay_time))
     
-    # Read UPS restart time
-    Restart_Time = read_registers(instrument, UPS_RESTART_TIME, 1, READ_HOLDING_REGISTER)
-    print("0x%02X - Restart Time: %d sec" % (UPS_RESTART_TIME, Restart_Time))
+#    # Read UPS restart time
+#    Restart_Time = read_registers(instrument, UPS_RESTART_TIME, 1, READ_HOLDING_REGISTER)
+#    print("0x%02X - Restart Time: %d sec" % (UPS_RESTART_TIME, Restart_Time))
 
     # Power Supply Status
     V_out = read_registers(instrument, READ_VOUT, 2, READ_INPUT_REGISTER)
@@ -202,14 +201,14 @@ def main():
     Status_out = "%.2f,%.2f,%.2f,%s,%d,%d,%d" % (V_out, I_out, V_Bat, ac_status, chg_ups_status, dc_ok, buffer_timeout)
 #    Status_out = "%.2f,%.2f,%.2f,%s,%d" % (V_out, I_out, V_Bat, ac_status, dc_ok)
 
-    file_path = '/Data/modbus/DRS-240_status.txt'
+    file_path = "D:\\modbus\\DRS-240_status.txt"  #'/Data/modbus/DRS-240_status.txt'
     save_to_file(Status_out, file_path)    
     # Close the serial connection
     instrument.serial.close()
     
     # If the buffer_timeout has been reached or the low battery alarm is set shutdown the computer
     if (buffer_timeout | (dc_ok == 0)):
-        file_path = '/Data/modbus/DRS-240_events.log'
+        file_path = "D:\\modbus\\DRS-240_events.log"  #'/Data/modbus/DRS-240_events.log'
         if (buffer_timeout):
             Status_out = "Shutdown,buffer_timeout"
             save_to_file(Status_out, file_path)
