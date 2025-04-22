@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #
 # Douglas Alden - 13 Mar 2024
-# Modified 8 Aug 2024 - hkw
+# Edited for YLI - 8 Aug 2024 - hkw
 
 import minimalmodbus
 from datetime import datetime
@@ -23,10 +23,10 @@ instrument.serial.bytesize = databits
 instrument.serial.parity = parity
 instrument.serial.stopbits = stopbits
 
-#a print(instrument.serial)
-#a print("")
-#a print("Modbus address:",hex(instrument.address))
-#a print("")
+#print(instrument.serial)
+#print("")
+#print("Modbus address:",hex(instrument.address))
+#print("")
 
 # Function Codes
 READ_HOLDING_REGISTER = 0x03
@@ -173,7 +173,7 @@ def main():
         else :
             message = message + ", Timeout Reached"
 
-        print(message)
+        #print(message)
     
     # Check if DC output is
     system_status = read_registers(instrument, SYSTEM_STATUS, 1, READ_HOLDING_REGISTER)
@@ -181,22 +181,22 @@ def main():
         dc_ok = (system_status & 0b00000010) >> 1
         chg_ups_status = (system_status & 0b10000000) >> 7
             
-    print("")
-    print(f"System stats")
-    print(f"      V Out:", V_out, "V")
-    print(f"      I Out:", I_out, "A")
-    print(f"     Batt V:", V_Bat, "V")
-    print(f"   AC Input:", ac_status)
+    #print("")
+    #print(f"System stats")
+    #print(f"      V Out:", V_out, "V")
+    #print(f"      I Out:", I_out, "A")
+    #print(f"     Batt V:", V_Bat, "V")
+    #print(f"   AC Input:", ac_status)
     
-    if (chg_ups_status == 1):
-        print(f"Operating Mode: UPS")
-    else:
-        print(f"Operating Mode: Charging")
+    # if (chg_ups_status == 1):
+        # print(f"Operating Mode: UPS")
+    # else:
+        # print(f"Operating Mode: Charging")
     
-    if (dc_ok == 1):
-        print(f"Secondary DD output voltage status: NORMAL")
-    else:
-        print(f"Secondary DD output voltage status: TOO LOW")
+    # if (dc_ok == 1):
+        # print(f"Secondary DD output voltage status: NORMAL")
+    # else:
+        # print(f"Secondary DD output voltage status: TOO LOW")
 
     Status_out = "%.2f,%.2f,%.2f,%s,%d,%d,%d" % (V_out, I_out, V_Bat, ac_status, chg_ups_status, dc_ok, buffer_timeout)
 #    Status_out = "%.2f,%.2f,%.2f,%s,%d" % (V_out, I_out, V_Bat, ac_status, dc_ok)
