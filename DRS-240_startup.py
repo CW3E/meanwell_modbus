@@ -2,7 +2,7 @@
 #
 # Douglas Alden - 13 Mar 2024
 # Generic version for Windows logger systems - HKW - 18 Apr 2025
-# Branch: RADMet_UPS - Version: 1.0
+# Branch: RADMet_UPS - Version: 1.1
 
 import minimalmodbus
 from datetime import datetime
@@ -145,7 +145,7 @@ def main() :
         # TIME_BUFFERING
         # default: 600 minutes
         # Set T1 time buffer duration
-        if (timer_length < 600) and  (timer_length >= 60):
+        if (timer_length < 64799) and  (timer_length >= 60):
             write_to_register(TIME_BUFFERING, timer_length)
         else:
             write_to_register(TIME_BUFFERING, default_timer)
